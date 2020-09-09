@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using Microsoft.CSharp.RuntimeBinder;
 namespace kousa
 {
 	
@@ -19,7 +20,7 @@ namespace kousa
 	/// </summary>
 	public partial class MainForm : Form
 	{
-		MainEdit me = new MainEdit();
+		dynamic me;
 		String config = System.IO.Directory.GetParent(Application.ExecutablePath).ToString() + "\\save.xml";
 		public MainForm()
 		{
@@ -27,81 +28,43 @@ namespace kousa
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
+			resetEditor();
 			try {
-				me = MainEdit.readFrom(config);
-			} catch (Exception) {
-				me = new MainEdit();
+				if (System.IO.File.Exists(config)) {
+					me = me.from(config);
+				}
+			} catch (Exception ex) {
+				throw ex;
 			}
-			propertyGrid1.SelectedObject = me;
 			
-			//
-			// TODO: Add constructor code after the InitializeComponent() call.
-			//
 		}
 		
 		void at_exit() {
 			me.saveTo(config);
 		}
 		
-		void BtnEditClick(object sender, EventArgs e)
-		{
-			edit();
+		
+		
+		void ToolStripButton1Click(object sender, EventArgs e) {
+			resetEditor();
+		}
+		void resetEditor(){
+			me = Factory.createObject("MainEdit.cs", "MainEdit");
+			propertyGrid1.SelectedObject = me;
+			resetCommands();
 		}
 		
-		void edit() {
-			Process p = new Process();
-			p.StartInfo.UseShellExecute = true;
-			p.StartInfo.FileName  = me.EditorFileName;
-			p.StartInfo.Arguments = me.FileName;
-			p.Start();
-		}
-		
-		bool compile() {
-			Process p = new Process();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName  = me.Compiler;
-			p.StartInfo.Arguments = me.FileName + " " + me.CompilerOptions + " " + me.CompilerOptionsAdd;
-			if (me.OutputName != "" && me.OutputName != null) {
-				p.StartInfo.Arguments += "-o " + me.OutputName;
+		void resetCommands() {
+			while (toolStrip1.Items.Count > 1) {
+				toolStrip1.Items.RemoveAt(toolStrip1.Items.Count - 1);
 			}
-			p.StartInfo.WorkingDirectory = me.FolderName;
-			p.StartInfo.RedirectStandardError = true;
-			p.StartInfo.CreateNoWindow = true;
-			p.Start();
-			p.WaitForExit();
-			
-			if (p.ExitCode != 0) {
-				MessageBox.Show(p.StandardError.ReadToEnd());
-				return false;
+			var l = me.getCommands();
+			foreach (Tuple<String, String> tp in l) {
+				var foo = tp.Item2;
+				toolStrip1.Items.Add(tp.Item1, null, (o, e) => {
+				    me.invoke(foo);
+				});
 			}
-			return true;
-		}
-		
-		void run() {
-			Process p = new Process();
-			p.StartInfo.UseShellExecute = true;
-			if (me.Runner != "") {
-				p.StartInfo.FileName  = me.Runner + " ";
-			}
-			if (me.OutputName != "" && me.OutputName != null) {
-				p.StartInfo.Arguments = me.OutputName;
-			} else {
-				p.StartInfo.Arguments = "a.exe";
-			}
-			p.StartInfo.Arguments += " " + me.Arguments;
-			p.StartInfo.WorkingDirectory = System.IO.Directory.GetParent(me.FileName).ToString();
-			p.Start();
-			p.WaitForExit();
-		}
-		
-		void openFolder() {
-			String s = System.IO.Directory.GetParent(me.FileName).ToString();
-			Process.Start("explorer.exe", s);
-		}
-		
-		void BtnOpenClick(object sender, EventArgs e)
-		{
-			openFolder();
 		}
 	}
 }

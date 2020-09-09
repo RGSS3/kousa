@@ -38,11 +38,10 @@ namespace kousa
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.btnEdit = new System.Windows.Forms.ToolStripButton();
-			this.btnRun = new System.Windows.Forms.ToolStripButton();
-			this.btnOpen = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -59,38 +58,21 @@ namespace kousa
 			// toolStrip1
 			// 
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-									this.btnEdit,
-									this.btnRun,
-									this.btnOpen});
+									this.toolStripButton1});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(352, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
-			// btnEdit
+			// toolStripButton1
 			// 
-			this.btnEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnEdit.Name = "btnEdit";
-			this.btnEdit.Size = new System.Drawing.Size(36, 22);
-			this.btnEdit.Text = "编辑";
-			this.btnEdit.Click += new System.EventHandler(this.BtnEditClick);
-			// 
-			// btnRun
-			// 
-			this.btnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnRun.Name = "btnRun";
-			this.btnRun.Size = new System.Drawing.Size(60, 22);
-			this.btnRun.Text = "编译运行";
-			this.btnRun.Click += new System.EventHandler(this.BtnRunClick);
-			// 
-			// btnOpen
-			// 
-			this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnOpen.Name = "btnOpen";
-			this.btnOpen.Size = new System.Drawing.Size(72, 22);
-			this.btnOpen.Text = "打开文件夹";
-			this.btnOpen.Click += new System.EventHandler(this.BtnOpenClick);
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(76, 22);
+			this.toolStripButton1.Text = "重新加载";
+			this.toolStripButton1.Click += new System.EventHandler(this.ToolStripButton1Click);
 			// 
 			// MainForm
 			// 
@@ -107,9 +89,7 @@ namespace kousa
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
-		private System.Windows.Forms.ToolStripButton btnOpen;
-		private System.Windows.Forms.ToolStripButton btnRun;
-		private System.Windows.Forms.ToolStripButton btnEdit;
+		private System.Windows.Forms.ToolStripButton toolStripButton1;
 		private System.Windows.Forms.ToolStrip toolStrip1;
 		private System.Windows.Forms.PropertyGrid propertyGrid1;
 		
@@ -118,11 +98,6 @@ namespace kousa
 			at_exit();
 		}
 		
-		void BtnRunClick(object sender, EventArgs e)
-		{
-			if (compile()) {
-				run();
-			}
-		}
+		
 	}
 }
